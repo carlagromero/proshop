@@ -7,14 +7,17 @@ import Rating from '../components/Rating';
 const Product = ({ match }) => {
   const [product, setProduct] = React.useState({});
 
-  const fetchProduct = async () => {
-    const { data } = await axios.get(`/products/${match.params.id}`);
-    setProduct(data);
-  };
+  const fetchProduct = React.useCallback(
+    () => async () => {
+      const { data } = await axios.get(`/products/${match.params.id}`);
+      setProduct(data);
+    },
+    [match.params.id]
+  );
 
   React.useEffect(() => {
     fetchProduct();
-  }, []);
+  }, [fetchProduct]);
 
   return (
     <div>
