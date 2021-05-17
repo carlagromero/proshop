@@ -1,19 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap';
+import {
+  Row,
+  Col,
+  Image,
+  ListGroup,
+  Card,
+  Button,
+  Form
+} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Rating from '../components/Rating';
 import { getProduct } from '../actions/productActions';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 
-const Product = ({ match }) => {
+const Product = ({ history, match }) => {
   const dispatch = useDispatch();
   const { product, loading, error } = useSelector(state => state.productDetail);
+
+  const [qty, setQty] = React.useState(1);
 
   React.useEffect(() => {
     dispatch(getProduct(match.params.id));
   }, [match.params.id, dispatch]);
+
+  const handleSubmit = () => {
+    history.push(`/cart/${match.params.id}?qty=${qty}`);
+  };
 
   return (
     <div>
@@ -65,10 +79,31 @@ const Product = ({ match }) => {
                     </Col>
                   </Row>
                 </ListGroup.Item>
+                {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>Quantity:</Col>
+                      <Col>
+                        <Form.Control
+                          as='select'
+                          value={qty}
+                          onChange={e => setQty(e.target.value)}
+                        >
+                          {[...Array(product.countInStock).keys()].map(key => (
+                            <option key={key + 1} value={key + 1}>
+                              {key + 1}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                )}
                 <ListGroup.Item>
                   <Row>
                     <Button
                       type='button'
+                      onClick={handleSubmit}
                       disabled={product.countInStock === 0}
                       block
                     >
