@@ -18,7 +18,7 @@ const cartItems = localStorage.getItem('cartItems')
 
 const userInfo = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
-  : {};
+  : null;
 
 const middleware = [thunk];
 const INITIAL_STATE = {
