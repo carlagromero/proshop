@@ -1,11 +1,7 @@
 import React from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  getUserDetails,
-  resetUserProfile,
-  updateUserProfile
-} from '../actions/userActions';
+import { getUserDetails, updateUserProfile } from '../actions/userActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
