@@ -6,6 +6,10 @@ import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGOUT,
+  USER_PROFILE_UPDATE_FAIL,
+  USER_PROFILE_UPDATE_REQUEST,
+  USER_PROFILE_UPDATE_RESET,
+  USER_PROFILE_UPDATE_SUCCESS,
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS
@@ -52,4 +56,24 @@ const userDetailsReducer = (state = { user: {} }, action) => {
   }
 };
 
-export { userLoginReducer, userRegisterReducer, userDetailsReducer };
+const userProfileUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_PROFILE_UPDATE_REQUEST:
+      return { loading: true };
+    case USER_PROFILE_UPDATE_SUCCESS:
+      return { loading: false, success: true, userInfo: action.payload };
+    case USER_PROFILE_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+    case USER_PROFILE_UPDATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export {
+  userLoginReducer,
+  userRegisterReducer,
+  userDetailsReducer,
+  userProfileUpdateReducer
+};

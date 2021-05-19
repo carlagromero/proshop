@@ -7,6 +7,10 @@ import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGOUT,
+  USER_PROFILE_UPDATE_FAIL,
+  USER_PROFILE_UPDATE_REQUEST,
+  USER_PROFILE_UPDATE_RESET,
+  USER_PROFILE_UPDATE_SUCCESS,
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS
@@ -49,6 +53,7 @@ const logout = () => dispatch => {
   localStorage.removeItem('userInfo');
 
   dispatch({ type: USER_LOGOUT });
+  dispatch({ type: USER_PROFILE_UPDATE_RESET });
 };
 
 const register = (name, email, password) => async dispatch => {
@@ -118,4 +123,51 @@ const getUserDetails = id => async (dispatch, getState) => {
   }
 };
 
-export { login, logout, register, getUserDetails };
+const updateUserProfile = user => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_PROFILE_UPDATE_REQUEST });
+
+    const { token } = getState().userLogin.userInfo;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    const { data } = await axios.put('/users/profile', user, config);
+
+    dispatch({
+      type: USER_PROFILE_UPDATE_SUCCESS,
+      payload: data
+    });
+
+    dispatch({
+      type: USER_LOGIN_SUCCESS,
+      payload: data
+    });
+
+    localStorage.setItem('userInfo', JSON.stringify(data));
+  } catch (error) {
+    dispatch({
+      type: USER_PROFILE_UPDATE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+    });
+  }
+};
+
+const resetUserProfile = () => ({
+  type: USER_PROFILE_UPDATE_RESET
+});
+
+export {
+  login,
+  logout,
+  register,
+  getUserDetails,
+  updateUserProfile,
+  resetUserProfile
+};
