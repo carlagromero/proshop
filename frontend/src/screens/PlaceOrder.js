@@ -1,16 +1,19 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, ListGroup, Card, Image, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Message from '../components/Message';
 import CheckoutSteps from '../components/CheckoutSteps';
+import { createOrder } from '../actions/orderActions';
 
 const formatDecimals = num => (Math.round(num * 100) / 100).toFixed(2);
 
-const PlaceOrder = () => {
+const PlaceOrder = ({ history }) => {
+  const dispatch = useDispatch();
   const { cartItems, shippingAddress, paymentMethod } = useSelector(
     state => state.cart
   );
+  const { order, success, error } = useSelector(state => state.orderCreated);
 
   const [itemsPrice, setItemsPrice] = React.useState(0);
   const [taxPrice, setTaxPrice] = React.useState(0);
@@ -30,8 +33,23 @@ const PlaceOrder = () => {
     setTotalPrice(Number(items) + Number(shipping) + Number(tax));
   }, [cartItems]);
 
+  React.useEffect(() => {
+    if (success) {
+      history.push(`/order/${order._id}`);
+    }
+  }, [history, order._id, success]);
+
   const handlePlaceOrder = () => {
-    console.log('handlePlaceOrder');
+    const order = {
+      orderItems: cartItems,
+      shippingAddress,
+      paymentMethod,
+      itemsPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice
+    };
+    dispatch(createOrder(order));
   };
 
   return (
@@ -134,6 +152,9 @@ const PlaceOrder = () => {
                     <p>${totalPrice}</p>
                   </Col>
                 </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                {error && <Message variant='danger'>{error}</Message>}
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
