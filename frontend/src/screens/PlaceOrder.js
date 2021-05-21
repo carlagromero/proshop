@@ -37,7 +37,7 @@ const PlaceOrder = ({ history }) => {
     if (success) {
       history.push(`/order/${order._id}`);
     }
-  }, [history, order._id, success]);
+  }, [history, order?._id, success]);
 
   const handlePlaceOrder = () => {
     const order = {
@@ -153,9 +153,11 @@ const PlaceOrder = ({ history }) => {
                   </Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
-                {error && <Message variant='danger'>{error}</Message>}
-              </ListGroup.Item>
+              {error && (
+                <ListGroup.Item>
+                  <Message variant='danger'>{error}</Message>
+                </ListGroup.Item>
+              )}
               <ListGroup.Item>
                 <Row>
                   <Button
