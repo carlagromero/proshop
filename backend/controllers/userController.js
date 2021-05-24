@@ -94,6 +94,7 @@ const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({});
 
   if (users) {
+    res.status(200);
     res.json(users);
   } else {
     res.json(404);

@@ -12,6 +12,7 @@ import Shipping from './screens/Shipping';
 import Payment from './screens/Payment';
 import PlaceOrder from './screens/PlaceOrder';
 import Order from './screens/Order';
+import UserList from './screens/UserList';
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Route path='/payment' component={Payment} />
           <Route path='/placeorder' component={PlaceOrder} />
           <Route path='/order/:id' component={Order} />
+          <Route path='/admin/user-list' component={UserList} />
           <Route path='/' exact component={Home} />
         </Container>
       </main>

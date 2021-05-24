@@ -5,6 +5,9 @@ import {
   USER_DETAILS_REQUEST,
   USER_DETAILS_RESET,
   USER_DETAILS_SUCCESS,
+  USER_LIST_FAIL,
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
@@ -174,6 +177,34 @@ const resetUserProfile = () => ({
   type: USER_PROFILE_UPDATE_RESET
 });
 
+const getUsersAdmin = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_LIST_REQUEST });
+
+    const { token } = getState().userLogin.userInfo;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    const { data } = await axios.get('/users', config);
+
+    dispatch({
+      type: USER_LIST_SUCCESS,
+      payload: data
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+    });
+  }
+};
+
 export {
   login,
   logout,
@@ -181,5 +212,6 @@ export {
   getUserDetails,
   resetUserDetails,
   updateUserProfile,
-  resetUserProfile
+  resetUserProfile,
+  getUsersAdmin
 };
