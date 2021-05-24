@@ -2,34 +2,54 @@ import React from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getUserById } from '../actions/userActions';
+import {
+  getUserDetails,
+  updateUserById,
+  resetUserUpdated
+} from '../actions/userActions';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
-const UserEdit = ({ match }) => {
+const UserEdit = ({ match, history }) => {
   const userId = match.params.id;
   const dispatch = useDispatch();
-  const { loading, error, user } = useSelector(
-    state => state.userUpdateDetails
-  );
+  const { loading, error, user } = useSelector(state => state.userDetails);
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate
+  } = useSelector(state => state.userUpdated);
 
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
-  const [isAdmin, setIsAdmin] = React.useState('');
+  const [admin, setAdmin] = React.useState('');
 
   React.useEffect(() => {
+    if (successUpdate) {
+      history.push('/admin/user-list');
+      dispatch(resetUserUpdated());
+    }
     if (!user || !user.name || user._id !== userId) {
-      dispatch(getUserById(userId));
+      dispatch(getUserDetails(userId));
     } else {
       setName(user.name);
       setEmail(user.email);
-      setIsAdmin(user.admin);
+      setAdmin(user.admin);
     }
-  }, [dispatch, userId, user]);
+  }, [dispatch, userId, user, successUpdate, history]);
 
-  const handleSubmit = () => {
-    console.log('submit');
+  const handleSubmit = e => {
+    e.preventDefault();
+
+    const userToUpdate = {
+      _id: user._id,
+      name,
+      email,
+      admin
+    };
+
+    dispatch(updateUserById(userToUpdate));
   };
 
   return (
@@ -39,6 +59,8 @@ const UserEdit = ({ match }) => {
       </Link>
       <FormContainer>
         <h1>Edit User</h1>
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -67,8 +89,8 @@ const UserEdit = ({ match }) => {
               <Form.Check
                 type='checkbox'
                 label='Is Admin'
-                checked={isAdmin}
-                onChange={e => setIsAdmin(e.target.checked)}
+                checked={admin}
+                onChange={e => setAdmin(e.target.checked)}
               />
             </Form.Group>
             <Button type='submit' variant='primary' className='mt-3'>

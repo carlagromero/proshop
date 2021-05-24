@@ -25,10 +25,8 @@ import {
   USER_REGISTER_SUCCESS,
   USER_UPDATED_FAIL,
   USER_UPDATED_REQUEST,
-  USER_UPDATED_SUCCESS,
-  USER_UPDATE_DETAILS_FAIL,
-  USER_UPDATE_DETAILS_REQUEST,
-  USER_UPDATE_DETAILS_SUCCESS
+  USER_UPDATED_RESET,
+  USER_UPDATED_SUCCESS
 } from './types';
 
 const login = (email, password) => async dispatch => {
@@ -244,34 +242,6 @@ const deleteUser = id => async (dispatch, getState) => {
   }
 };
 
-const getUserById = id => async (dispatch, getState) => {
-  try {
-    dispatch({ type: USER_UPDATE_DETAILS_REQUEST });
-
-    const { token } = getState().userLogin.userInfo;
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
-
-    const { data } = await axios.get(`/users/${id}`, config);
-
-    dispatch({
-      type: USER_UPDATE_DETAILS_SUCCESS,
-      payload: data
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_UPDATE_DETAILS_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message
-    });
-  }
-};
-
 const updateUserById = user => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_UPDATED_REQUEST });
@@ -284,12 +254,10 @@ const updateUserById = user => async (dispatch, getState) => {
       }
     };
 
-    const { data } = await axios.get(`/users/${user._id}`, user, config);
+    const { data } = await axios.put(`/users/${user._id}`, user, config);
 
-    dispatch({
-      type: USER_UPDATED_SUCCESS,
-      payload: data
-    });
+    dispatch({ type: USER_UPDATED_SUCCESS });
+    dispatch({ type: USER_DETAILS_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: USER_UPDATED_FAIL,
@@ -299,6 +267,10 @@ const updateUserById = user => async (dispatch, getState) => {
           : error.message
     });
   }
+};
+
+const resetUserUpdated = user => async dispatch => {
+  dispatch({ type: USER_UPDATED_RESET });
 };
 
 export {
@@ -311,6 +283,6 @@ export {
   resetUserProfile,
   getUsersAdmin,
   deleteUser,
-  getUserById,
-  updateUserById
+  updateUserById,
+  resetUserUpdated
 };
