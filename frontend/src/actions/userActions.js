@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
+  USER_DETAILS_RESET,
   USER_DETAILS_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQUEST,
@@ -53,6 +54,7 @@ const logout = () => dispatch => {
   localStorage.removeItem('userInfo');
   localStorage.removeItem('cartItems');
   localStorage.removeItem('shippingAddress');
+  localStorage.removeItem('paymentMethod');
 
   dispatch({ type: USER_LOGOUT });
   dispatch({ type: USER_PROFILE_UPDATE_RESET });
@@ -125,6 +127,10 @@ const getUserDetails = id => async (dispatch, getState) => {
   }
 };
 
+const resetUserDetails = () => ({
+  type: USER_DETAILS_RESET
+});
+
 const updateUserProfile = user => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_PROFILE_UPDATE_REQUEST });
@@ -170,6 +176,7 @@ export {
   logout,
   register,
   getUserDetails,
+  resetUserDetails,
   updateUserProfile,
   resetUserProfile
 };

@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   ORDER_CREATE_FAIL,
   ORDER_CREATE_REQUEST,
+  ORDER_CREATE_RESET,
   ORDER_CREATE_SUCCESS,
   ORDER_DETAILS_FAIL,
   ORDER_DETAILS_REQUEST,
@@ -70,6 +71,10 @@ export const getOrderDetails = id => async (dispatch, getState) => {
     });
   }
 };
+
+export const resetOrderDetails = () => ({
+  type: ORDER_CREATE_RESET
+});
 
 export const updateOrderPay =
   (id, paymentResult) => async (dispatch, getState) => {

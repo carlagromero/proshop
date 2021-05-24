@@ -4,7 +4,8 @@ import { Row, Col, ListGroup, Card, Image, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Message from '../components/Message';
 import CheckoutSteps from '../components/CheckoutSteps';
-import { createOrder } from '../actions/orderActions';
+import { createOrder, resetOrderDetails } from '../actions/orderActions';
+import { resetUserDetails } from '../actions/userActions';
 
 const formatDecimals = num => (Math.round(num * 100) / 100).toFixed(2);
 
@@ -36,8 +37,11 @@ const PlaceOrder = ({ history }) => {
   React.useEffect(() => {
     if (success) {
       history.push(`/order/${order._id}`);
+      dispatch(resetUserDetails());
+      dispatch(resetOrderDetails());
     }
-  }, [history, order?._id, success]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, history, success]);
 
   const handlePlaceOrder = () => {
     const order = {
