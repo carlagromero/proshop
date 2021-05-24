@@ -6,14 +6,17 @@ import { getUsersAdmin } from '../actions/userActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
-const UserList = () => {
+const UserList = ({ history }) => {
   const dispatch = useDispatch();
 
   const { loading, error, users } = useSelector(state => state.usersList);
+  const { userInfo } = useSelector(state => state.userLogin);
 
   React.useEffect(() => {
-    dispatch(getUsersAdmin());
-  }, [dispatch]);
+    if (userInfo && userInfo.admin) {
+      dispatch(getUsersAdmin());
+    }
+  }, [dispatch, history, userInfo]);
 
   const handleDelete = id => {
     console.log(id);
