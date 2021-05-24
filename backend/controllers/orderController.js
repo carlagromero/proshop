@@ -71,4 +71,10 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
-export { createOrder, getOrder, updateOrderToPaid };
+const getMyOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ user: req.user._id });
+
+  res.status(200).json(orders);
+});
+
+export { createOrder, getOrder, updateOrderToPaid, getMyOrders };

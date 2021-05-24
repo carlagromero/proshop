@@ -5,6 +5,9 @@ import {
   ORDER_DETAILS_FAIL,
   ORDER_DETAILS_REQUEST,
   ORDER_DETAILS_SUCCESS,
+  ORDER_LIST_USER_FAIL,
+  ORDER_LIST_USER_REQUEST,
+  ORDER_LIST_USER_SUCCESS,
   ORDER_PAY_FAIL,
   ORDER_PAY_REQUEST,
   ORDER_PAY_RESET,
@@ -52,4 +55,22 @@ const orderPayReducer = (state = {}, action) => {
   }
 };
 
-export { orderReducer, orderDetailsReducer, orderPayReducer };
+const ordersListUserRedurcer = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case ORDER_LIST_USER_REQUEST:
+      return { loading: true };
+    case ORDER_LIST_USER_SUCCESS:
+      return { loading: false, orders: action.payload };
+    case ORDER_LIST_USER_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export {
+  orderReducer,
+  orderDetailsReducer,
+  orderPayReducer,
+  ordersListUserRedurcer
+};
