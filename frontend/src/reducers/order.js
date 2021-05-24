@@ -7,6 +7,7 @@ import {
   ORDER_DETAILS_SUCCESS,
   ORDER_LIST_USER_FAIL,
   ORDER_LIST_USER_REQUEST,
+  ORDER_LIST_USER_RESET,
   ORDER_LIST_USER_SUCCESS,
   ORDER_PAY_FAIL,
   ORDER_PAY_REQUEST,
@@ -63,6 +64,8 @@ const ordersListUserRedurcer = (state = { orders: [] }, action) => {
       return { loading: false, orders: action.payload };
     case ORDER_LIST_USER_FAIL:
       return { loading: false, error: action.payload };
+    case ORDER_LIST_USER_RESET:
+      return { orders: [] };
     default:
       return state;
   }

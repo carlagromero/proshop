@@ -28,15 +28,17 @@ const Profile = ({ history }) => {
     if (!userInfo) {
       history.push('/login');
     } else {
-      if (!user || !user.name || !user.email) {
+      if (!user || !user.name || success) {
         dispatch(getUserDetails('profile'));
         dispatch(getMyOrdersList());
       } else {
+        console.log('2');
         setName(user.name);
         setEmail(user.email);
       }
     }
-  }, [dispatch, history, user, userInfo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, history, success, userInfo]);
 
   const handleSubmit = e => {
     e.preventDefault();

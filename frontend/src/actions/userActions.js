@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  ORDER_LIST_USER_RESET,
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
   USER_DETAILS_RESET,
@@ -58,6 +59,8 @@ const logout = () => dispatch => {
 
   dispatch({ type: USER_LOGOUT });
   dispatch({ type: USER_PROFILE_UPDATE_RESET });
+  dispatch({ type: USER_DETAILS_RESET });
+  dispatch({ type: ORDER_LIST_USER_RESET });
 };
 
 const register = (name, email, password) => async dispatch => {
