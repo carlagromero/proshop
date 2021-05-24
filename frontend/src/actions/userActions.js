@@ -1,6 +1,9 @@
 import axios from 'axios';
 import {
   ORDER_LIST_USER_RESET,
+  USER_DELETE_FAIL,
+  USER_DELETE_REQUEST,
+  USER_DELETE_SUCCESS,
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
   USER_DETAILS_RESET,
@@ -207,6 +210,34 @@ const getUsersAdmin = () => async (dispatch, getState) => {
   }
 };
 
+const deleteUser = id => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_DELETE_REQUEST });
+
+    const { token } = getState().userLogin.userInfo;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    await axios.delete(`/users/${id}`, config);
+
+    dispatch({
+      type: USER_DELETE_SUCCESS,
+      payload: true
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_DELETE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+    });
+  }
+};
+
 export {
   login,
   logout,
@@ -215,5 +246,6 @@ export {
   resetUserDetails,
   updateUserProfile,
   resetUserProfile,
-  getUsersAdmin
+  getUsersAdmin,
+  deleteUser
 };

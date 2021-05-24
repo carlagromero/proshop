@@ -42,7 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id)
     });
   } else {
-    res.json(400);
+    res.status(400);
     throw new Error('Invalid user data');
   }
 });
@@ -58,7 +58,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       admin: user.admin
     });
   } else {
-    res.json(404);
+    res.status(404);
     throw new Error('User not found');
   }
 });
@@ -85,7 +85,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       });
     }
   } else {
-    res.json(404);
+    res.status(404);
     throw new Error('User not found');
   }
 });
@@ -97,9 +97,29 @@ const getUsers = asyncHandler(async (req, res) => {
     res.status(200);
     res.json(users);
   } else {
-    res.json(404);
+    res.status(404);
     throw new Error('Users not found');
   }
 });
 
-export { authUser, registerUser, getUserProfile, updateUserProfile, getUsers };
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    await user.remove();
+    res.status(200);
+    res.json({ message: 'User removed' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+export {
+  authUser,
+  registerUser,
+  getUserProfile,
+  updateUserProfile,
+  getUsers,
+  deleteUser
+};
