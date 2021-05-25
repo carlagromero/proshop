@@ -16,6 +16,8 @@ const UserList = ({ history }) => {
   React.useEffect(() => {
     if (userInfo && userInfo.admin) {
       dispatch(getUsersAdmin());
+    } else {
+      history.push('/login');
     }
   }, [dispatch, history, success, userInfo]);
 

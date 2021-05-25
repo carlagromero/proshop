@@ -3,7 +3,7 @@ import { Button, Col, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { getProducts } from '../actions/productActions';
+import { getProducts, deleteProduct } from '../actions/productActions';
 import { LinkContainer } from 'react-router-bootstrap';
 
 const ProductList = () => {
@@ -11,16 +11,21 @@ const ProductList = () => {
 
   const { userInfo } = useSelector(state => state.userLogin);
   const { loading, error, products } = useSelector(state => state.productsList);
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete
+  } = useSelector(state => state.productDelete);
 
   React.useEffect(() => {
     if (userInfo && userInfo.admin) {
       dispatch(getProducts());
     }
-  }, [dispatch, userInfo]);
+  }, [dispatch, userInfo, successDelete]);
 
   const handleDelete = id => {
     if (window.confirm('Are you sure?')) {
-      console.log(id);
+      dispatch(deleteProduct(id));
     }
   };
 
@@ -40,6 +45,8 @@ const ProductList = () => {
           </Button>
         </Col>
       </Row>
+      {loadingDelete && <Loader />}
+      {errorDelete && <Message variant='error'>{errorDelete}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
