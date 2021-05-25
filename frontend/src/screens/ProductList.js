@@ -3,10 +3,15 @@ import { Button, Col, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { getProducts, deleteProduct } from '../actions/productActions';
+import {
+  getProducts,
+  deleteProduct,
+  createProduct,
+  resetCreateProduct
+} from '../actions/productActions';
 import { LinkContainer } from 'react-router-bootstrap';
 
-const ProductList = () => {
+const ProductList = ({ history }) => {
   const dispatch = useDispatch();
 
   const { userInfo } = useSelector(state => state.userLogin);
@@ -16,12 +21,33 @@ const ProductList = () => {
     error: errorDelete,
     success: successDelete
   } = useSelector(state => state.productDelete);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct
+  } = useSelector(state => state.productCreate);
 
   React.useEffect(() => {
-    if (userInfo && userInfo.admin) {
+    dispatch(resetCreateProduct());
+
+    if (!userInfo.admin) {
+      history.pushState('/login');
+    }
+
+    if (successCreate) {
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+    } else {
       dispatch(getProducts());
     }
-  }, [dispatch, userInfo, successDelete]);
+  }, [
+    dispatch,
+    userInfo,
+    successDelete,
+    successCreate,
+    history,
+    createdProduct
+  ]);
 
   const handleDelete = id => {
     if (window.confirm('Are you sure?')) {
@@ -29,8 +55,8 @@ const ProductList = () => {
     }
   };
 
-  const handleCreateProduct = product => {
-    console.log(product);
+  const handleCreateProduct = () => {
+    dispatch(createProduct());
   };
 
   return (
@@ -45,6 +71,8 @@ const ProductList = () => {
           </Button>
         </Col>
       </Row>
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant='error'>{errorCreate}</Message>}
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant='error'>{errorDelete}</Message>}
       {loading ? (

@@ -1,4 +1,8 @@
 import {
+  PRODUCT_CREATE_FAIL,
+  PRODUCT_CREATE_REQUEST,
+  PRODUCT_CREATE_RESET,
+  PRODUCT_CREATE_SUCCESS,
   PRODUCT_DELETE_FAIL,
   PRODUCT_DELETE_REQUEST,
   PRODUCT_DELETE_SUCCESS,
@@ -36,6 +40,21 @@ const productDetailReducer = (state = { product: { reviews: [] } }, action) => {
   }
 };
 
+const productCreateReducer = (state = { product: {} }, action) => {
+  switch (action.type) {
+    case PRODUCT_CREATE_REQUEST:
+      return { loading: true };
+    case PRODUCT_CREATE_SUCCESS:
+      return { loading: false, product: action.payload, success: true };
+    case PRODUCT_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+    case PRODUCT_CREATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
 const productDeleteReducer = (state = {}, action) => {
   switch (action.type) {
     case PRODUCT_DELETE_REQUEST:
@@ -49,4 +68,9 @@ const productDeleteReducer = (state = {}, action) => {
   }
 };
 
-export { productsReducer, productDetailReducer, productDeleteReducer };
+export {
+  productsReducer,
+  productDetailReducer,
+  productCreateReducer,
+  productDeleteReducer
+};
