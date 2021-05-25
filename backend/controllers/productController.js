@@ -19,16 +19,61 @@ const getProductById = asyncHandler(async (req, res) => {
 });
 
 const createProduct = asyncHandler(async (req, res) => {
-  const { name, price, category, brand } = req.body;
+  const product = new Product({
+    user: req.user._id,
+    name: 'Sample name',
+    price: 0,
+    category: 'Sample category',
+    brand: 'Sample brand',
+    countInStock: 0,
+    numReviews: 0,
+    description: 'Sample description',
+    image: '/images/sample.jpeg'
+  });
 
-  const product = await Product.create({ name, price, category, brand });
+  const productCreated = await product.save();
 
-  if (product) {
+  if (productCreated) {
     res.status(201);
-    res.json(product);
+    res.json(productCreated);
   } else {
     res.status(404);
     throw new Error('Invalid product data');
+  }
+});
+
+const updateProduct = asyncHandler(async (req, res) => {
+  const {
+    name,
+    price,
+    category,
+    brand,
+    countInStock,
+    numReviews,
+    description,
+    image
+  } = req.body;
+
+  const product = Product.findById(req.body.product.id);
+
+  if (product) {
+    product.user = req.user._id;
+    product.name = name || product.name;
+    product.price = price || product.price;
+    product.description = description || req.body.description;
+    product.image = image || req.body.image;
+    product.brand = brand || req.body.brand;
+    product.category = category || req.body.category;
+    product.countInStock = countInStock || req.body.countInStock;
+    product.numReviews = numReviews || req.body.numReviews;
+
+    const productUpdated = await product.save();
+
+    res.status(201);
+    res.json(productUpdated);
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
   }
 });
 
@@ -46,4 +91,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
-export { getProducts, getProductById, createProduct, deleteProduct };
+export {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct
+};
