@@ -43,29 +43,20 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-  const {
-    name,
-    price,
-    category,
-    brand,
-    countInStock,
-    numReviews,
-    description,
-    image
-  } = req.body;
+  const { name, price, category, brand, countInStock, description, image } =
+    req.body;
 
-  const product = Product.findById(req.body.product.id);
+  const product = await Product.findById(req.params.id);
 
   if (product) {
     product.user = req.user._id;
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.description = description || req.body.description;
-    product.image = image || req.body.image;
-    product.brand = brand || req.body.brand;
-    product.category = category || req.body.category;
-    product.countInStock = countInStock || req.body.countInStock;
-    product.numReviews = numReviews || req.body.numReviews;
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.image = image;
+    product.brand = brand;
+    product.category = category;
+    product.countInStock = countInStock;
 
     const productUpdated = await product.save();
 
