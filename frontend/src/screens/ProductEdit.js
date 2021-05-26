@@ -2,17 +2,26 @@ import React from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getProduct } from '../actions/productActions';
+import {
+  getProduct,
+  updateProduct,
+  resetUpdateProduct
+} from '../actions/productActions';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
-const ProductEdit = ({ match }) => {
+const ProductEdit = ({ match, history }) => {
   const productId = match.params.id;
 
   const dispatch = useDispatch();
 
   const { product, loading, error } = useSelector(state => state.productDetail);
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate
+  } = useSelector(state => state.productUpdate);
 
   const [name, setName] = React.useState('');
   const [price, setPrice] = React.useState(0);
@@ -23,21 +32,40 @@ const ProductEdit = ({ match }) => {
   const [description, setDescription] = React.useState('');
 
   React.useEffect(() => {
-    if (!product.name || product._id !== productId) {
-      dispatch(getProduct(productId));
+    if (successUpdate) {
+      dispatch(resetUpdateProduct());
+      history.push('/admin/product-list');
     } else {
-      setName(product.name);
-      setPrice(product.price);
-      setImage(product.image);
-      setBrand(product.brand);
-      setCategory(product.category);
-      setCountInStock(product.countInStock);
-      setDescription(product.description);
+      if (!product.name || product._id !== productId) {
+        console.log('1');
+        dispatch(getProduct(productId));
+      } else {
+        console.log('2');
+        setName(product.name);
+        setPrice(product.price);
+        setImage(product.image);
+        setBrand(product.brand);
+        setCategory(product.category);
+        setCountInStock(product.countInStock);
+        setDescription(product.description);
+      }
     }
-  }, [dispatch, product.name, productId]);
+  }, [dispatch, product.name, productId, successUpdate]);
 
   const handleSubmit = e => {
     e.preventDefault();
+    const product = {
+      _id: productId,
+      name,
+      price,
+      image,
+      brand,
+      category,
+      countInStock,
+      description
+    };
+
+    dispatch(updateProduct(product));
   };
 
   return (
@@ -47,6 +75,8 @@ const ProductEdit = ({ match }) => {
       </Link>
       <FormContainer>
         <h1>Edit Product</h1>
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant='error'>{errorUpdate}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -63,7 +93,7 @@ const ProductEdit = ({ match }) => {
               />
             </Form.Group>
             <Form.Group controlId='price'>
-              <Form.Label className='mt-4'>Email Address</Form.Label>
+              <Form.Label className='mt-4'>Price</Form.Label>
               <Form.Control
                 type='number'
                 placeholder='Enter price'

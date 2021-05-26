@@ -12,7 +12,11 @@ import {
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_LIST_FAIL,
   PRODUCT_LIST_REQUEST,
-  PRODUCT_LIST_SUCCESS
+  PRODUCT_LIST_SUCCESS,
+  PRODUCT_UPDATE_FAIL,
+  PRODUCT_UPDATE_REQUEST,
+  PRODUCT_UPDATE_RESET,
+  PRODUCT_UPDATE_SUCCESS
 } from './types';
 
 export const getProducts = () => async dispatch => {
@@ -80,6 +84,41 @@ export const createProduct = () => async (dispatch, getState) => {
 
 export const resetCreateProduct = () => dispatch => {
   dispatch({ type: PRODUCT_CREATE_RESET });
+};
+
+export const updateProduct = product => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_UPDATE_REQUEST });
+
+    const { token } = getState().userLogin.userInfo;
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    const { data } = await axios.put(
+      `/products/${product._id}`,
+      product,
+      config
+    );
+
+    dispatch({ type: PRODUCT_UPDATE_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_UPDATE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+    });
+  }
+};
+
+export const resetUpdateProduct = () => dispatch => {
+  dispatch({ type: PRODUCT_UPDATE_RESET });
 };
 
 export const deleteProduct = id => async (dispatch, getState) => {
