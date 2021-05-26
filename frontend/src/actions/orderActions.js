@@ -7,6 +7,9 @@ import {
   ORDER_DETAILS_FAIL,
   ORDER_DETAILS_REQUEST,
   ORDER_DETAILS_SUCCESS,
+  ORDER_LIST_FAIL,
+  ORDER_LIST_REQUEST,
+  ORDER_LIST_SUCCESS,
   ORDER_LIST_USER_FAIL,
   ORDER_LIST_USER_REQUEST,
   ORDER_LIST_USER_SUCCESS,
@@ -139,6 +142,35 @@ export const getMyOrdersList = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ORDER_LIST_USER_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+    });
+  }
+};
+
+export const getOrderList = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_LIST_REQUEST });
+
+    const { token } = getState().userLogin.userInfo;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    const { data } = await axios.get('/orders/', config);
+
+    dispatch({
+      type: ORDER_LIST_SUCCESS,
+      payload: data
+    });
+  } catch (error) {
+    dispatch({
+      type: ORDER_LIST_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
