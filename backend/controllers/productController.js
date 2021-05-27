@@ -89,7 +89,7 @@ const createProductReview = asyncHandler(async (req, res) => {
 
   if (product) {
     const alreadyReviewed = product.reviews.find(
-      item => item.user === req.user._id
+      item => item.user.toString() === req.user._id.toString()
     );
 
     if (alreadyReviewed) {
