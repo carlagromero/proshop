@@ -23,11 +23,11 @@ import {
   PRODUCT_UPDATE_SUCCESS
 } from './types';
 
-export const getProducts = () => async dispatch => {
+export const getProducts = keyword => async dispatch => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
 
-    const { data } = await axios.get('/products');
+    const { data } = await axios.get(`/products?keyword=${keyword}`);
 
     dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
   } catch (error) {
