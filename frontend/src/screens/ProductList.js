@@ -10,12 +10,17 @@ import {
   resetCreateProduct
 } from '../actions/productActions';
 import { LinkContainer } from 'react-router-bootstrap';
+import Paginate from '../components/Paginate';
+import { useParams } from 'react-router';
 
 const ProductList = ({ history }) => {
   const dispatch = useDispatch();
+  const { pageNumber } = useParams();
 
   const { userInfo } = useSelector(state => state.userLogin);
-  const { loading, error, products } = useSelector(state => state.productsList);
+  const { loading, error, products, pages, page } = useSelector(
+    state => state.productsList
+  );
   const {
     loading: loadingDelete,
     error: errorDelete,
@@ -38,7 +43,7 @@ const ProductList = ({ history }) => {
     if (successCreate) {
       history.push(`/admin/product/${createdProduct._id}/edit`);
     } else {
-      dispatch(getProducts());
+      dispatch(getProducts('', pageNumber));
     }
   }, [
     dispatch,
@@ -46,7 +51,8 @@ const ProductList = ({ history }) => {
     successDelete,
     successCreate,
     history,
-    createdProduct
+    createdProduct,
+    pageNumber
   ]);
 
   const handleDelete = id => {
@@ -80,43 +86,46 @@ const ProductList = ({ history }) => {
       ) : error ? (
         <Message variant='error'>{error}</Message>
       ) : (
-        <Table striped bordered hover responsive className='table-sm'>
-          <thead>
-            <tr>
-              <td>ID</td>
-              <td>NAME</td>
-              <td>PRICE</td>
-              <td>CATEGORY</td>
-              <td>BRAND</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(product => (
-              <tr key={product._id}>
-                <td>{product._id}</td>
-                <td>{product.name}</td>
-                <td>${product.price}</td>
-                <td>{product.category}</td>
-                <td>{product.brand}</td>
-                <td>
-                  <LinkContainer to={`/admin/product/${product._id}/edit`}>
-                    <Button variant='light' className='btn-sm'>
-                      <i className='fas fa-edit'></i>
-                    </Button>
-                  </LinkContainer>
-                  <Button
-                    variant='danger'
-                    className='btn-sm'
-                    onClick={() => handleDelete(product._id)}
-                  >
-                    <i className='fas fa-trash'></i>
-                  </Button>
-                </td>
+        <>
+          <Table striped bordered hover responsive className='table-sm'>
+            <thead>
+              <tr>
+                <td>ID</td>
+                <td>NAME</td>
+                <td>PRICE</td>
+                <td>CATEGORY</td>
+                <td>BRAND</td>
+                <td></td>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {products.map(product => (
+                <tr key={product._id}>
+                  <td>{product._id}</td>
+                  <td>{product.name}</td>
+                  <td>${product.price}</td>
+                  <td>{product.category}</td>
+                  <td>{product.brand}</td>
+                  <td>
+                    <LinkContainer to={`/admin/product/${product._id}/edit`}>
+                      <Button variant='light' className='btn-sm'>
+                        <i className='fas fa-edit'></i>
+                      </Button>
+                    </LinkContainer>
+                    <Button
+                      variant='danger'
+                      className='btn-sm'
+                      onClick={() => handleDelete(product._id)}
+                    >
+                      <i className='fas fa-trash'></i>
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Paginate pages={pages} page={page} isAdmin={userInfo.admin} />
+        </>
       )}
     </>
   );

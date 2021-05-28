@@ -23,23 +23,27 @@ import {
   PRODUCT_UPDATE_SUCCESS
 } from './types';
 
-export const getProducts = keyword => async dispatch => {
-  try {
-    dispatch({ type: PRODUCT_LIST_REQUEST });
+export const getProducts =
+  (keyword = '', pageNumber = 1) =>
+  async dispatch => {
+    try {
+      dispatch({ type: PRODUCT_LIST_REQUEST });
 
-    const { data } = await axios.get(`/products?keyword=${keyword}`);
+      const { data } = await axios.get(
+        `/products?keyword=${keyword}&pageNumber=${pageNumber}`
+      );
 
-    dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({
-      type: PRODUCT_LIST_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message
-    });
-  }
-};
+      dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({
+        type: PRODUCT_LIST_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+      });
+    }
+  };
 
 export const getProduct = id => async dispatch => {
   try {
