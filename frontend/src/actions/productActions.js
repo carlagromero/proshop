@@ -17,6 +17,9 @@ import {
   PRODUCT_REVIEW_CREATE_REQUEST,
   PRODUCT_REVIEW_CREATE_RESET,
   PRODUCT_REVIEW_CREATE_SUCCESS,
+  PRODUCT_TOP_RATED_FAIL,
+  PRODUCT_TOP_RATED_REQUEST,
+  PRODUCT_TOP_RATED_SUCCESS,
   PRODUCT_UPDATE_FAIL,
   PRODUCT_UPDATE_REQUEST,
   PRODUCT_UPDATE_RESET,
@@ -185,4 +188,22 @@ export const createProductReview =
 
 export const resetProductReview = () => dispatch => {
   dispatch({ type: PRODUCT_REVIEW_CREATE_RESET });
+};
+
+export const getTopRatedProducts = () => async dispatch => {
+  try {
+    dispatch({ type: PRODUCT_TOP_RATED_REQUEST });
+
+    const { data } = await axios.get('/products/top');
+
+    dispatch({ type: PRODUCT_TOP_RATED_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_TOP_RATED_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+    });
+  }
 };
