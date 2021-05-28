@@ -39,10 +39,8 @@ const ProductEdit = ({ match, history }) => {
       history.push('/admin/product-list');
     } else {
       if (!product.name || product._id !== productId) {
-        console.log('1');
         dispatch(getProduct(productId));
       } else {
-        console.log('2');
         setName(product.name);
         setPrice(product.price);
         setImage(product.image);
@@ -52,7 +50,7 @@ const ProductEdit = ({ match, history }) => {
         setDescription(product.description);
       }
     }
-  }, [dispatch, product.name, productId, successUpdate]);
+  }, [dispatch, product, productId, successUpdate, history]);
 
   const handleSubmit = e => {
     e.preventDefault();
