@@ -18,6 +18,7 @@ import {
 } from '../actions/productActions';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
+import Meta from '../components/Meta';
 
 const Product = ({ history, match }) => {
   const productId = match.params.id;
@@ -63,6 +64,7 @@ const Product = ({ history, match }) => {
         <Message variant='danger'>{error}</Message>
       ) : (
         <>
+          <Meta title={product.name} />
           <Row>
             <Col md={6}>
               <Image src={product.image} alt={product.name} fluid />
